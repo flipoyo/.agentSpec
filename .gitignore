@@ -8,3 +8,4 @@ AgentSpec/
 # The nested DevSpec repository declared in install.cgs (a plain clone, not a
 # submodule). Its own checkout is never tracked by this repository.
 /DevSpec/
+DevSpec

@@ -5,7 +5,7 @@
 ## Abstract — read this first
 
 **Template — copy before use.** Copy this file into the consuming project's
-own `AgentSpec/AGENT.md` and fill in anything project-specific (the
+own `.localSpec/AGENT.md` and fill in anything project-specific (the
 Orchestration row's spec filenames, any role a project genuinely doesn't
 use, and the Mermaid graph if the flow differs); do not edit it in place
 here and expect a project to pick up the change automatically.
@@ -55,7 +55,7 @@ graph TD
 
 | Agent | Scope | Out of scope — hand off to |
 |---|---|---|
-| **Orchestration** | Architecture, design, and specs (`DevSpecs.md`, `AdditionalSpecs.md`, `AgentSpec/audit.md`, planning tickets); decomposes an incoming task into role-scoped sub-tasks and reconciles their output. | Writing implementation code itself — assign it to Dev instead. |
+| **Orchestration** | Architecture, design, and specs (`DevSpecs.md`, `AdditionalSpecs.md`, `.localSpec/audit.md`, planning tickets); decomposes an incoming task into role-scoped sub-tasks and reconciles their output. | Writing implementation code itself — assign it to Dev instead. |
 | **Dev (IT)** | Implementation and refactoring in ANSI C, Python, Rust, Flex, Bison, Fortran, C++, `make`, and shell (`.sh`). | Test-suite design and CI/pipeline wiring (→ CI/CD); prose/diagram formatting (→ Editing). |
 | **CI/CD** | Unit tests, integration tests, and the working environment (build tooling, package managers, pipeline configuration). | Writing the feature code under test (→ Dev). |
 | **Editing** | LaTeX, Markdown, Mermaid diagrams, Slidev decks. | Technical accuracy of the content it formats — that stays with the agent that authored it; Editing polishes structure and syntax, not substance. |
@@ -72,7 +72,7 @@ graph TD
   into role-scoped sub-tasks up front, not discovered mid-implementation.
 - Rules specific to this project's own source — module boundaries, import
   rules, or other architecture constraints the project has adopted — live
-  in `AgentSpec/AdditionalSpecs.md` (architecture) and bind the Dev agent
+  in `.localSpec/AdditionalSpecs.md` (architecture) and bind the Dev agent
   whenever it is working inside the project's own source tree.
-  `AgentSpec/audit.md` is a different file — findings, legacy references,
+  `.localSpec/audit.md` is a different file — findings, legacy references,
   and open decisions/risks, not architecture rules; don't conflate them.

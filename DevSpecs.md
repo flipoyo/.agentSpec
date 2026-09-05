@@ -6,16 +6,21 @@ This file captures the owner's reusable, project-agnostic development
 principles. Every project that declares conformity to **DevSpecs** must follow
 every section below. Project-specific refinements and additional constraints
 belong in a separate `AdditionalSpecs.md`, kept together with this project's
-other deeper spec/authoring references in an `AgentSpec/` directory at the
-project root (see *Planning* below for the full layout). A minimal `AGENT.md`
-also lives at the project root itself; its only job is to state the reading
-order for an agent onboarding to the project — e.g. the project's own
-command/build-and-test reference first, then `AgentSpec/` for everything
-else. Keeping it minimal avoids duplicating content that belongs in
-`AgentSpec/AGENT.md` (the parallel-agent orchestration roster, see
-*Planning*), `AgentSpec/AdditionalSpecs.md` (architecture and
-project-specific technical rules), or `AgentSpec/audit.md` (audit
-findings, legacy references, and open decisions/risks).
+own agent roster (`AGENT.md`) and audit findings (`audit.md`) in a
+`.localSpec/` mount at the project root — one repository, one branch per
+project (see *Planning* below for the full layout). This file, alongside
+`DOCSTYLE.md`, `TICKETLIFECYCLE.md`, and a generic `AGENT.md` template, ships
+from a separate `.agentSpec/` mount: the same shared repository, on its
+`main` branch, in every conforming project. A minimal `AGENT.md` also lives
+at the project root itself; its only job is to state the reading order for
+an agent onboarding to the project — e.g. the project's own
+command/build-and-test reference first, then `.localSpec/` and `.agentSpec/`
+for everything else. Keeping it minimal avoids duplicating content that
+belongs in `.localSpec/AGENT.md` (the parallel-agent orchestration roster,
+filled in from the `.agentSpec/AGENT.md` template — see *Planning*),
+`.localSpec/AdditionalSpecs.md` (architecture and project-specific technical
+rules), or `.localSpec/audit.md` (audit findings, legacy references, and
+open decisions/risks).
 
 ---
 
@@ -53,7 +58,7 @@ Every stateful managed object progresses through a well-defined set of
 lifecycle states.
 
 - Lifecycle states and their valid transitions must be documented per project
-  in `AgentSpec/AdditionalSpecs.md`.
+  in `.localSpec/AdditionalSpecs.md`.
 - Transitions must be explicit, validated, and logged.
 - Bootstrapping operations must produce a fully initialised object or fail
   explicitly — partial success is not acceptable.
@@ -145,10 +150,18 @@ Planning documents follow a defined lifecycle so that history is preserved and
 active plans are always easy to identify.
 
 - **Active plan**: planning tickets live in an `AgentSpec/` directory at the
-  project root — one file per initiative (e.g. `<Name>_DevPlanTicket.md`),
-  not a single pair overwritten on every re-plan. The project's own deeper
-  spec/authoring references (an `AdditionalSpecs.md`, an `audit.md`, an
-  `AGENT.md`) live in the same directory.
+  project root, tracked directly by the consuming project's own
+  repository — one file per initiative (e.g. `<Name>_DevPlanTicket.md`), not
+  a single pair overwritten on every re-plan.
+- **The project's own deeper references** — `AdditionalSpecs.md`,
+  `audit.md`, and its filled-in `AGENT.md` — live in `.localSpec/`, a mount
+  of a repository dedicated to that purpose, on a branch named after the
+  project. That repository's `main` branch carries nothing project-specific;
+  it exists only so the mount resolves before a project branch does.
+- **The generic references** — this file, `DOCSTYLE.md`,
+  `TICKETLIFECYCLE.md`, and a template `AGENT.md` to copy from — live in
+  `.agentSpec/`, a mount of the same shared repository in every conforming
+  project, on its `main` branch.
 - **Archival**: once a ticket is complete, it moves to
   `AgentSpec/archive/<YYYYMMDD>_<name>.md`. The archive-date filename prefix
   stands in for an in-body timestamp, so an already-archived ticket does not
@@ -158,14 +171,14 @@ active plans are always easy to identify.
   run; it is treated as read-only once the agent starts executing it.
 - **Locality**: `AgentSpec/` (active and archived alike) is local to the
   consuming project's own repository. It is never part of the shared
-  `DevSpec` repository this file ships from — a project's planning history
-  is project-specific, and syncing it back into `DevSpec` would leak one
-  project's tickets into every other project that consumes `DevSpecs.md`.
-  A project that mounts `DevSpec` as a submodule keeps `AgentSpec/` as an
-  ordinary tracked directory of its own, outside the submodule boundary;
-  `DevSpec`'s own `.gitignore` should still exclude ticket-shaped paths
-  (`AgentSpec/`, `*_DevPlanTicket.md`) as a second line of defense against
-  one getting staged inside the submodule checkout by mistake.
+  `.agentSpec` repository this file ships from — a project's planning
+  history is project-specific, and syncing it back into `.agentSpec` would
+  leak one project's tickets into every other project that mounts it. A
+  project that mounts `.agentSpec` keeps `AgentSpec/` as an ordinary tracked
+  directory of its own, outside the mount; `.agentSpec`'s own `.gitignore`
+  should still exclude ticket-shaped paths (`AgentSpec/`,
+  `*_DevPlanTicket.md`) as a second line of defense against one getting
+  staged inside that mount by mistake.
 
 ## Document Conventions
 
@@ -197,7 +210,7 @@ Every project must ship end-user documentation alongside the source code.
     explicitly out of scope.
 - The structure, style, and conventions for the `docs/` LaTeX project are
   defined in `docs/DocSpec/DocSpecs.md` (project-agnostic) together with any
-  project-specific additions in `AgentSpec/AdditionalSpecs.md`. This
+  project-specific additions in `.localSpec/AdditionalSpecs.md`. This
   information is accessible through `docs/AGENT.md`.
 - Documentation must be updated in the same PR as the code change that
   introduces or modifies a user-facing feature.

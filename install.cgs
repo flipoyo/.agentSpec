@@ -1,0 +1,9 @@
+# .agentSpec's own topology: this shell plus the shared DevSpec repository it
+# mounts. DevSpec has no .cgs of its own, so it resolves as a normal leaf.
+
+project = ".agentSpec"
+
+repos = [
+    { repository = "github:flipoyo/.agentSpec", relative_path = ".", fallback_branch = "main" },
+    { repository = "github:flipoyo/DevSpec", fallback_branch = "main", nested_config = "disabled" },
+]

@@ -71,7 +71,7 @@ the wrong answer to the only question the filename is there to answer.
 
 It is **not** the date the ticket was written. That is the `*Created:
 YYYY-MM-DD*` line under the title, which is set once at authoring time and
-never rewritten (see [DOCSTYLE.md](DOCSTYLE.md) §6). An archived ticket
+never rewritten (see [DOCSTYLE.md](DevSpec/DOCSTYLE.md) §6). An archived ticket
 keeps that line: the two dates are different facts, and a ticket that was
 planned in August and shipped in September should say so on both counts.
 
@@ -81,8 +81,8 @@ which may link back to this one.
 
 ## 4. What this does not cover
 
-Specs (a project's own `.localSpec/AdditionalSpecs.md`, this shared
-repository's `DevSpecs.md`, [DOCSTYLE.md](DOCSTYLE.md), this file), a
+Specs (a project's own `.localSpec/AdditionalSpecs.md`, the nested
+`DevSpec/DevSpecs.md`, [DOCSTYLE.md](DevSpec/DOCSTYLE.md), this file), a
 project's own `.localSpec/audit.md`, `README.md`, and the tutorials are
 **living documents**, not tickets. They are edited in
 place forever, are never stamped, and never move to `archive/`. The test

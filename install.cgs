@@ -5,5 +5,5 @@ project = ".agentSpec"
 
 repos = [
     { repository = "github:flipoyo/.agentSpec", relative_path = ".", fallback_branch = "main" },
-    { repository = "github:flipoyo/DevSpec", fallback_branch = "main", nested_config = "disabled" },
+    { repository = "github:flipoyo/DevSpec", fallback_branch = "main", nested_config = "disabled", pinned = true },
 ]

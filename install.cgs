@@ -1,7 +1,12 @@
 # .agentSpec's own topology: this shell plus the shared DevSpec repository it
 # mounts. DevSpec has no .cgs of its own, so it resolves as a normal leaf.
+#
+# default_branch is stated rather than left to DEFAULT_BRANCH in
+# ComplexGitSync's source. .agentSpec is shared across every project that
+# mounts it, so the branch DevSpec lands on must be readable here, and must
+# not move because some consumer's tree chose a different project branch.
 
-project = ".agentSpec"
+project = { name = ".agentSpec", default_branch = "main" }
 
 repos = [
     { repository = "github:flipoyo/.agentSpec", relative_path = ".", fallback_branch = "main" },

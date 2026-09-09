@@ -10,5 +10,5 @@ project = { name = ".agentSpec", default_branch = "main" }
 
 repos = [
     { repository = "github:flipoyo/.agentSpec", relative_path = ".", fallback_branch = "main" },
-    { repository = "github:flipoyo/DevSpec", fallback_branch = "main", nested_config = "disabled", pinned = true },
+    { repository = "github:flipoyo/DevSpec", fallback_branch = "main", private = true },
 ]

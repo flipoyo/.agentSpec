@@ -24,14 +24,16 @@ changes.
 
 **What you will find.** Two states and the one transition between them,
 the priority-and-rank prefix an open ticket carries, what the date stamp
-means, and what the rule does *not* cover.
+means, the commit messages a finished ticket owes, and what the rule does
+*not* cover.
 
 **Who it is for.** Anyone — human or agent — who writes, ranks, or
 finishes a ticket.
 
 **What you need to do with it.** Give every new ticket a prefix when you
 create it (§2). Stamp and move it as part of the commit that implements
-it (§4), not as a later tidy-up.
+it (§4), not as a later tidy-up, and deliver a commit message for every
+repository that changed (§4.1).
 
 ```mermaid
 graph LR
@@ -97,6 +99,17 @@ A rank is a current judgement, not a commitment or a delivery order. A
 ticket ranked `2-5` is not bad work: `2` is a scheduling claim, not a
 quality one.
 
+### 2.2 Referring to a ticket from another document
+
+Because ranks move, **name a ticket by its short name in prose** —
+`AppendCloneMode`, not `1-2_AppendCloneMode_DevPlanTicket.md`. A ranked
+filename written into running text is wrong at the next review, and
+nothing will tell you.
+
+Write the full ranked path only in an actual Markdown link, where a
+reader clicks it and a broken one is visible. Those are the paths the
+`grep` in §4 is there to catch.
+
 ## 3. What the stamp is
 
 `YYYYMMDD`, no separators — the date the implementation landed.
@@ -130,6 +143,23 @@ comparison set left to mean anything against.
 Stamping is part of the implementing change, not a follow-up: a ticket
 whose work has shipped but whose filename still says "open" is exactly
 the wrong answer to the first question the filename is there to answer.
+
+### 4.1 Deliver the commit messages
+
+Finishing a ticket includes writing the commit message for **every
+repository the change touched** — the project's own, and each mounted
+configuration repository that changed. They are separate Git
+repositories, they commit separately, and each one needs a message that
+stands on its own.
+
+Deliver them as text in the report that closes the ticket. A reader who
+was away from the work should be able to read the message and know what
+landed, without opening the diff.
+
+Whether to commit is the owner's call unless the owner asks for it. A
+repository that is private and read-only is a third case again: a push
+there reaches every project that mounts it, so it is never bundled with
+the project's own commit.
 
 ## 5. What this does not cover
 

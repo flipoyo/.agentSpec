@@ -11,8 +11,11 @@ one branch per project — see `DevSpec/DevSpecs.md`'s *Planning* section.
 ## What is here
 
 - **`TICKETLIFECYCLE.md`** — how a planning ticket under a consuming
-  project's own `AgentSpec/` is named and filed: plain name while active, a
-  `YYYYMMDD_` stamp and a move to `AgentSpec/archive/` once implemented.
+  project's own `DevTickets/` is named and filed: a `<priority>-<rank>_`
+  prefix while active, a `YYYYMMDD_` stamp and a move to
+  `DevTickets/archive/` once implemented. It also covers the short tickets
+  those plans are made from, and says why `DevTickets/` belongs in a
+  project's private `.localSpec/` mount rather than in the project itself.
 - **`install.cgs`** — this repository's own topology. It mounts
   `flipoyo/DevSpec` at `DevSpec/`, so a project that mounts `.agentSpec`
   with nested discovery enabled gets both in one step.

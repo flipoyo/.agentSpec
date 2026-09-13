@@ -6,9 +6,9 @@
 
 **The one-line version.** An open planning ticket is named for its
 priority and its place in the queue — `1-3_Name_DevPlanTicket.md` — and
-lives in `AgentSpec/openTickets/`. When its work is implemented, that
+lives in `DevTickets/openTickets/`. When its work is implemented, that
 prefix is replaced by a `YYYYMMDD_` calendar stamp — the date the
-implementation landed — and the file moves to `AgentSpec/archive/`.
+implementation landed — and the file moves to `DevTickets/archive/`.
 
 **What this document is.** The naming and filing rules for planning
 tickets: `DevPlan*.md`, `DevPlanTicket*.md`, `CorPlan*.md`, and anything
@@ -23,10 +23,11 @@ already happened, the other is rewritten on purpose whenever the order
 changes.
 
 **What you will find.** Two states and the one transition between them,
-the priority-and-rank prefix an open ticket carries, the optional topic
-prefix that marks a workstream, the branch line every ticket states
-inside it, what the date stamp means, the commit messages a finished
-ticket owes, and what the rule does *not* cover.
+where `DevTickets/` lives and why it is private, the priority-and-rank
+prefix an open ticket carries, the optional topic prefix that marks a
+workstream, the branch line every ticket states inside it, what the date
+stamp means, the commit messages a finished ticket owes, the short tickets
+plans are made from, and what the rule does *not* cover.
 
 **Who it is for.** Anyone — human or agent — who writes, ranks, or
 finishes a ticket.
@@ -34,13 +35,15 @@ finishes a ticket.
 **What you need to do with it.** Give every new ticket a prefix when you
 create it (§2) and a branch line inside it (§3). Stamp and move it as part
 of the commit that implements it (§5), not as a later tidy-up, and deliver
-a commit message for every repository that changed (§5.1).
+a commit message for every repository that changed (§5.1). Close the short
+ticket it came from in the same change (§6).
 
 ```mermaid
 graph LR
-    W["Work identified"] --> A["AgentSpec/openTickets/<br/>1-3_Name_DevPlanTicket.md<br/><i>open, ranked</i>"]
+    W["Owner's request<br/>DevTickets/shortTickets/name.md"] --> A["DevTickets/openTickets/<br/>1-3_Name_DevPlanTicket.md<br/><i>open, ranked</i>"]
+    W -->|"plans updated"| CU["DevTickets/archive/.closedUserTicket/<br/>YYYYMMDD_name.md<br/><i>closed request</i>"]
     A -->|"Ticket review<br/>re-ranks the piles"| A
-    A -->|implemented| S["AgentSpec/archive/<br/>YYYYMMDD_Name_DevPlanTicket.md<br/><i>done</i>"]
+    A -->|implemented| S["DevTickets/archive/<br/>YYYYMMDD_Name_DevPlanTicket.md<br/><i>done</i>"]
     S --> H["historical record<br/>never edited again"]
 
     classDef here fill:#1565C0,color:#fff,stroke:#111,stroke-width:2px;
@@ -53,20 +56,34 @@ graph LR
 
 | State | Where it lives | Filename |
 |---|---|---|
-| **Open** — planned, in progress, or partly done | `AgentSpec/openTickets/` | ranked: `<priority>-<rank>_[<topic>-]<Name>_DevPlanTicket.md` |
-| **Implemented** — the work described is done | `AgentSpec/archive/` | stamped: `<YYYYMMDD>_<Name>_DevPlanTicket.md` |
+| **Open** — planned, in progress, or partly done | `DevTickets/openTickets/` | ranked: `<priority>-<rank>_[<topic>-]<Name>_DevPlanTicket.md` |
+| **Implemented** — the work described is done | `DevTickets/archive/` | stamped: `<YYYYMMDD>_<Name>_DevPlanTicket.md` |
 
 There is no third state. A ticket that turns out to be wrong, or that is
 superseded by another, is archived the same way — the stamp records when
 it stopped being live work, and the document itself says why.
 
-`AgentSpec/` itself holds nothing but these two directories. A ticket
-sitting loose at that level is a filing mistake, not a state.
+`DevTickets/` holds those two directories, `shortTickets/` for the
+requests plans are made from (§6), and a `README.md` saying how the three
+work together. Nothing else, and no ticket sitting loose at that level —
+that is a filing mistake, not a state.
+
+### 1.1 Where `DevTickets/` lives
+
+`DevTickets/` is the planning surface of one project, and it is **private**:
+it is the record of how the work is decided, which is nobody's business but
+the people doing it. A project that mounts a private configuration
+repository keeps it there — in ComplexGitSync, `.localSpec/DevTickets/` —
+so that installing or cloning the product does not hand a user sixty
+internal plans, most of them about work that was dropped.
+
+Each project's own spec says where its `DevTickets/` sits. Everything below
+is written as `DevTickets/…` and means "wherever that project put it".
 
 ## 2. The prefix an open ticket carries
 
 ```
-AgentSpec/openTickets/<priority>-<rank>_<Name>_DevPlanTicket.md
+DevTickets/openTickets/<priority>-<rank>_<Name>_DevPlanTicket.md
 ```
 
 **`<priority>` is `1` or `2`.** Nothing else is a valid priority.
@@ -114,7 +131,7 @@ reader clicks it and a broken one is visible. Those are the paths the
 ### 2.3 The topic prefix, when a group of tickets is one workstream
 
 ```
-AgentSpec/openTickets/<priority>-<rank>_<topic>-<Name>_DevPlanTicket.md
+DevTickets/openTickets/<priority>-<rank>_<topic>-<Name>_DevPlanTicket.md
 ```
 
 Several tickets sometimes form one line of work that is developed
@@ -184,8 +201,8 @@ In the same commit that finishes the work — the `<priority>-<rank>_`
 prefix comes off, the stamp goes on:
 
 ```bash
-git mv AgentSpec/openTickets/<priority>-<rank>_<Name>_DevPlanTicket.md \
-       AgentSpec/archive/<YYYYMMDD>_<Name>_DevPlanTicket.md
+git mv DevTickets/openTickets/<priority>-<rank>_<Name>_DevPlanTicket.md \
+       DevTickets/archive/<YYYYMMDD>_<Name>_DevPlanTicket.md
 ```
 
 Then fix any link that pointed at the old path (`grep -rn "<Name>_DevPlanTicket"`).
@@ -215,7 +232,36 @@ repository that is private and read-only is a third case again: a push
 there reaches every project that mounts it, so it is never bundled with
 the project's own commit.
 
-## 6. What this does not cover
+## 6. Short tickets — the request a plan comes from
+
+A planning ticket is the analysed form of something somebody asked for. The
+unanalysed form is a **short ticket**: a few lines from the project's owner
+saying what they want, in their own words, filed in
+`DevTickets/shortTickets/` under a plain descriptive name.
+
+| State | Where it lives | Filename |
+|---|---|---|
+| **Open** — asked for, not yet carried into the plans | `DevTickets/shortTickets/` | plain: `<name>.md` |
+| **Closed** — the plans now say what it asked for | `DevTickets/archive/.closedUserTicket/` | stamped: `<YYYYMMDD>_<name>.md` |
+
+A short ticket carries no priority, no rank and no branch line. It is a
+request, not queued work: ranking it, reconciling it with what is already
+planned, and deciding which tickets it changes is the job it triggers, not
+a job for the person writing it.
+
+**Closing one follows the planning-ticket rules exactly** (§5): the stamp is
+the date the request was satisfied, the move happens in the same change that
+satisfies it, and the file is never edited afterwards. It is the record of
+what was asked for, in the words it was asked in; rewriting it to match what
+was built would destroy the only independent account of the two. A request
+that is refused or dropped is closed the same way — the stamp says when it
+stopped being live, and the plans, or the answer given at the time, say why.
+
+A request made in conversation rather than in a file is the same thing.
+Write it down and file it, or the record of what was asked for lives only in
+a chat log.
+
+## 7. What this does not cover
 
 Specs (a project's own `.localSpec/AdditionalSpecs.md`, the nested
 `DevSpec/DevSpecs.md`, [DOCSTYLE.md](DevSpec/DOCSTYLE.md), this file), a

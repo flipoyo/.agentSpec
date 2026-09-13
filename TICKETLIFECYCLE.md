@@ -23,17 +23,18 @@ already happened, the other is rewritten on purpose whenever the order
 changes.
 
 **What you will find.** Two states and the one transition between them,
-the priority-and-rank prefix an open ticket carries, what the date stamp
-means, the commit messages a finished ticket owes, and what the rule does
-*not* cover.
+the priority-and-rank prefix an open ticket carries, the optional topic
+prefix that marks a workstream, the branch line every ticket states
+inside it, what the date stamp means, the commit messages a finished
+ticket owes, and what the rule does *not* cover.
 
 **Who it is for.** Anyone — human or agent — who writes, ranks, or
 finishes a ticket.
 
 **What you need to do with it.** Give every new ticket a prefix when you
-create it (§2). Stamp and move it as part of the commit that implements
-it (§4), not as a later tidy-up, and deliver a commit message for every
-repository that changed (§4.1).
+create it (§2) and a branch line inside it (§3). Stamp and move it as part
+of the commit that implements it (§5), not as a later tidy-up, and deliver
+a commit message for every repository that changed (§5.1).
 
 ```mermaid
 graph LR
@@ -52,7 +53,7 @@ graph LR
 
 | State | Where it lives | Filename |
 |---|---|---|
-| **Open** — planned, in progress, or partly done | `AgentSpec/openTickets/` | ranked: `<priority>-<rank>_<Name>_DevPlanTicket.md` |
+| **Open** — planned, in progress, or partly done | `AgentSpec/openTickets/` | ranked: `<priority>-<rank>_[<topic>-]<Name>_DevPlanTicket.md` |
 | **Implemented** — the work described is done | `AgentSpec/archive/` | stamped: `<YYYYMMDD>_<Name>_DevPlanTicket.md` |
 
 There is no third state. A ticket that turns out to be wrong, or that is
@@ -108,9 +109,62 @@ nothing will tell you.
 
 Write the full ranked path only in an actual Markdown link, where a
 reader clicks it and a broken one is visible. Those are the paths the
-`grep` in §4 is there to catch.
+`grep` in §5 is there to catch.
 
-## 3. What the stamp is
+### 2.3 The topic prefix, when a group of tickets is one workstream
+
+```
+AgentSpec/openTickets/<priority>-<rank>_<topic>-<Name>_DevPlanTicket.md
+```
+
+Several tickets sometimes form one line of work that is developed
+together — usually on a branch of its own — and the reader needs to see
+that from the filename, before opening anything. Those tickets take a
+short **topic prefix** between the rank and the name: `1-2_memDev-VerifyHonesty_DevPlanTicket.md`.
+
+The prefix is optional and most tickets have none: an unprefixed ticket
+is ordinary work on the project's main branch. Each project names its own
+topics in its own spec (a project's `.localSpec/AdditionalSpecs.md`, or
+the equivalent), because a topic only means something inside one project.
+Keep it short, lowerCamelCase, and the same for every ticket in the group.
+
+A topic prefix says which workstream a ticket belongs to. It says nothing
+about priority, and it never replaces the rank: the two piles are still
+ranked as §2.1 describes, and a workstream's tickets can sit at any rank
+in either pile.
+
+Like the rank, the topic prefix is dropped when the ticket is archived
+(§5) — by then the branch has merged and the group has stopped being a
+live grouping.
+
+## 3. The branch a ticket's work lands on
+
+Every ticket states, directly under its `*Created:*` line, the branch its
+implementation lands on:
+
+```markdown
+*Created: 2026-09-12*
+
+*Branch: memory-dev*
+```
+
+`*Branch: main*` is the common case and is still written out. Silence is
+not the default — a reader must not have to infer a branch from the
+absence of one.
+
+**Why it is in the ticket and not only in someone's head.** A ticket is
+picked up weeks after it was ranked, often by someone who was not in the
+conversation that decided where the work goes. Committing a workstream's
+change to the wrong branch is cheap to do and expensive to unpick, and
+nothing in the filename, the diff, or the test suite catches it.
+
+The line records where the work lands, not where the ticket file itself is
+edited. It is set when the ticket is written and changes only if the
+project moves the workstream; when a branch merges and the work continues
+on the main branch, say so by editing the line, not by leaving a branch
+name that no longer exists.
+
+## 4. What the stamp is
 
 `YYYYMMDD`, no separators — the date the implementation landed.
 
@@ -124,7 +178,7 @@ Neither date is ever edited afterwards. A stamped, archived ticket is a
 historical record — if the work needs revisiting, that is a new ticket,
 which may link back to this one.
 
-## 4. The transition
+## 5. The transition
 
 In the same commit that finishes the work — the `<priority>-<rank>_`
 prefix comes off, the stamp goes on:
@@ -144,7 +198,7 @@ Stamping is part of the implementing change, not a follow-up: a ticket
 whose work has shipped but whose filename still says "open" is exactly
 the wrong answer to the first question the filename is there to answer.
 
-### 4.1 Deliver the commit messages
+### 5.1 Deliver the commit messages
 
 Finishing a ticket includes writing the commit message for **every
 repository the change touched** — the project's own, and each mounted
@@ -161,7 +215,7 @@ repository that is private and read-only is a third case again: a push
 there reaches every project that mounts it, so it is never bundled with
 the project's own commit.
 
-## 5. What this does not cover
+## 6. What this does not cover
 
 Specs (a project's own `.localSpec/AdditionalSpecs.md`, the nested
 `DevSpec/DevSpecs.md`, [DOCSTYLE.md](DevSpec/DOCSTYLE.md), this file), a
